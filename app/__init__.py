@@ -12,12 +12,4 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 from app.models import dbmodels
-
-
-@app.route('/')
-def main_page():
-    return 'Hello!'
-
-
-if __name__ == '__main__':
-    app.run()
+from app.views import view

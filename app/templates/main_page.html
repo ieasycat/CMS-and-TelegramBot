@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+    <table border=1>
+        <tr>
+            <td>Name</td>
+            <td>Last name</td>
+            <td>Nickname</td>
+            <td>More Info</td>
+        </tr>
+        {% for employee in employees %}
+        <tr>
+            <td>{{ employee.name }}</td>
+            <td>{{ employee.last_name }}</td>
+            <td>{{ employee.nickname }}</td>
+            <td>
+                <form action = "{{ url_for('get_user', employee_id = employee.id) }}" method="post">
+                    <button>Info</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

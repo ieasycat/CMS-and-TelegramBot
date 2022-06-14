@@ -24,17 +24,8 @@ class Employee(db.Model):
     name = db.Column(db.String(50))
     last_name = db.Column(db.String(50))
     nickname = db.Column(db.String(50))
-    employee_data_id = db.Column(
-        db.Integer,
-        db.ForeignKey('employee_data.id'),
-        nullable=True,
-    )
-    employee_data = db.relationship(
-        'EmployeeData',
-        foreign_keys='Employee.employee_data_id',
-        backref=db.backref('employee', uselist=False),
-        cascade="all, delete",
-    )
+    employee_data = db.relationship('EmployeeData', backref='employee', uselist=False,
+                                    cascade="all, delete-orphan", single_parent=True)
 
     def __repr__(self):
         return f'<User {self.nickname}>'
@@ -46,6 +37,10 @@ class EmployeeData(db.Model):
     status = db.Column(db.String(15))
     cv = db.Column(db.Text)
     additional_data = db.Column(db.Text, nullable=True)
+    employee_id = db.Column(
+        db.Integer,
+        db.ForeignKey('employee.id', ondelete="CASCADE"),
+    )
 
     def __repr__(self):
         return f'<User {self.main_technology}>'
