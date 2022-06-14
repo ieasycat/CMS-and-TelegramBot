@@ -1,0 +1,3 @@
+POSTGRES_USER = 'anton'
+POSTGRES_PASSWORD = 1234
+DB_NAME = 'testdb'
