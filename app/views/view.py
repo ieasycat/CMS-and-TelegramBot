@@ -1,44 +1,56 @@
-from app import app, db
-from app.models.dbmodels import Employee, EmployeeData
-from flask import render_template, redirect, url_for
+from app import app
+from app.controllers.user_db_controller import EmployeeController
+from flask import render_template, redirect, url_for, Blueprint
+from app.models.forms import AddEmployeeForm
 
-'''
-Create simple methods for user model (and user_data) :
-Create user
-Read user (get)
-Update user
-Delete user
-You need to do it both ways - ORM and psycopg2 (raw sql)
-'''
+
+mod = Blueprint('employee', __name__, url_prefix='/employee')
 
 
 @app.route('/')
-@app.route('/index')
-def main_page():
-    employees = db.session.query(Employee).all()
+@app.route('/index', methods=['GET', 'POST'])
+@app.route('/index/<int:page>', methods=['GET', 'POST'])
+def main_page(page=1):
+    employees = EmployeeController.get_all_employees(page)
     return render_template('main_page.html', employees=employees)
 
 
-@app.route('/get_user/<int:employee_id>', methods=['GET', 'POST'])
-def get_user(employee_id):
-    employee = Employee.query.filter(Employee.id == employee_id).first()
-    return render_template('employee_info_page.html', employee=employee)
+@mod.route('/get/<int:employee_id>', methods=['GET', 'POST'])
+def get_user(employee_id: int):
+    return render_template('employee_info_page.html', employee=EmployeeController.get_employee(employee_id))
 
 
-@app.route('/create_user')
-def create_user():
-    pass
+@mod.route('/add', methods=['GET', 'POST'])
+def add_user():
+    form = AddEmployeeForm()
+
+    if form.validate_on_submit():
+        EmployeeController.add_employee(form=form)
+        return redirect(url_for('main_page'))
+
+    return render_template('add_page.html', form=form)
 
 
-@app.route('/update_user/<int:employee_id>')
-def update_user(employee_id):
-    employee = Employee.query.filter(Employee.id == employee_id).first()
-    pass
+@mod.route('/update/<int:employee_id>', methods=['GET', 'POST'])
+def update_user(employee_id: int):
+    employee = EmployeeController.get_employee(employee_id)
+
+    form = AddEmployeeForm(**employee.__dict__)
+
+    if form.validate_on_submit():
+        EmployeeController.update_employee(user=employee, form=form)
+        return redirect(url_for('main_page'))
+
+    return render_template('update_user.html', form=form)
 
 
-@app.route('/delete_user/<int:employee_id>', methods=['GET', 'POST'])
-def delete_user(employee_id):
-    Employee.query.filter(Employee.id == employee_id).delete()
-    db.session.commit()
-    db.session.close()
+@mod.route('/update_status/<int:employee_id>', methods=['POST'])
+def update_status(employee_id: int):
+    EmployeeController.change_status(employee_id)
+    return redirect(url_for('main_page'))
+
+
+@mod.route('/delete/<int:employee_id>', methods=['POST'])
+def delete_user(employee_id: int):
+    EmployeeController.delete_employee(employee_id)
     return redirect(url_for('main_page'))

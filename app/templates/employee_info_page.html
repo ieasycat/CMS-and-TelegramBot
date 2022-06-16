@@ -8,25 +8,29 @@
             <td>Main technology</td>
             <td>Status</td>
             <td>CV</td>
-            <td>Additional data</td>
             <td>Option</td>
         </tr>
         <tr>
             <td>{{ employee.name }}</td>
             <td>{{ employee.last_name }}</td>
             <td>{{ employee.nickname }}</td>
-            <td>{{ employee.employee_data.main_technology }}</td>
-            <td>{{ employee.employee_data.status }}</td>
+            <td>{{ employee.main_technology }}</td>
+            <td>{{ employee.status }}</td>
             <td>{{ employee.employee_data.cv }}</td>
-            <td>{{ employee.employee_data.additional_data }}</td>
-            <td><form action = "{{ url_for('delete_user', employee_id = employee.id) }}" method="post">
-        <button>Delete User</button>
-    </form></td>
+            <td>
+                <form action = "{{ url_for('employee.delete_user', employee_id = employee.id) }}" method="post">
+                    <button>Delete User</button>
+                </form>
+                <p></p>
+                <form action = "{{ url_for('employee.update_user', employee_id = employee.id) }}" method="post">
+                    <button>Changes User</button>
+                </form>
+            </td>
         </tr>
     </table>
     <p></p>
 
     <form action = "{{ url_for('main_page') }}" method="get">
-        <button>Return</button>
+        <button>Home</button>
     </form>
 {% endblock %}

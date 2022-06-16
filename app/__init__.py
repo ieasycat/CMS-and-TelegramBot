@@ -1,11 +1,10 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from config import POSTGRES_USER, POSTGRES_PASSWORD, DB_NAME
 from flask_migrate import Migrate
+from config import CONFIG
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@localhost:5432/{DB_NAME}'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config.from_object(CONFIG)
 
 db = SQLAlchemy(app)
 
@@ -13,3 +12,6 @@ migrate = Migrate(app, db)
 
 from app.models import dbmodels
 from app.views import view
+from app.views.view import mod
+
+app.register_blueprint(mod)
