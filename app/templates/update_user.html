@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form method="POST" action="">
+
+            {{ form.csrf_token }}
+
+                <p>{{ form.name.label }} : {{ form.name(size=20) }}</p>
+
+                <p>{{ form.last_name.label }} : {{ form.last_name(size=20) }}</p>
+
+                <p>{{ form.main_technology.label }} : {{ form.main_technology }}</p>
+
+                <p>{{ form.status.label }} :  {{ form.status }}</p>
+
+                <p>{{ form.cv.label }} : {{ form.cv(size=20) }}</p>
+
+                <p>{{ form.additional_data.label }} : {{ form.additional_data(size=20) }}</p>
+
+        <input type="submit" value="Done">
+    </form>
+    <p>
+        <form action = "{{ url_for('main_page') }}" method="get">
+            <button>Home</button>
+        </form>
+    </p>
+{% endblock %}
