@@ -22,7 +22,7 @@ class EmployeeController:
             db.session.query(Employee).filter(Employee.id == employee_id).first().change_status()
             db.session.commit()
             db.session.close()
-        except:
+        except Exception:
             db.session.rollback()
 
     @staticmethod
@@ -48,7 +48,7 @@ class EmployeeController:
             db.session.add(user_data)
             db.session.commit()
             db.session.close()
-        except:
+        except Exception:
             db.session.rollback()
 
     @staticmethod
@@ -65,7 +65,7 @@ class EmployeeController:
 
             db.session.commit()
             db.session.close()
-        except:
+        except Exception:
             db.session.rollback()
 
     @staticmethod
@@ -74,5 +74,5 @@ class EmployeeController:
             Employee.query.filter(Employee.id == employee_id).delete()
             db.session.commit()
             db.session.close()
-        except:
+        except Exception:
             db.session.rollback()

@@ -48,6 +48,7 @@ class Employee(db.Model):
 
 
 class EmployeeData(db.Model):
+    __tablename__ = 'employee_data'
     id = db.Column(db.Integer, primary_key=True)
     cv = db.Column(db.Text, nullable=True)
     additional_data = db.Column(db.Text, nullable=True)
