@@ -18,12 +18,16 @@ def main_page(page=1):
     form_filter = TechnologyFilterForm()
     form_search = EmployeeSearchForm()
     employees = EmployeeController.get_all_employees(page=page)
+    weather_loc_info, weather_info = UrlController.weather_request()
+
     context = {
         'form_filter': form_filter,
         'form_search': form_search,
         'employees': employees,
         'next_url': UrlController.get_next_url(endpoint='main_page', pagination=employees),
-        'prev_url': UrlController.get_prev_url(endpoint='main_page', pagination=employees)
+        'prev_url': UrlController.get_prev_url(endpoint='main_page', pagination=employees),
+        'weather_loc_info': weather_loc_info,
+        'weather_info': weather_info
     }
 
     form = EmployeeController.form_validate_on_submit(form_filter=form_filter, form_search=form_search)

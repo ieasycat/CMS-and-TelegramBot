@@ -9,6 +9,7 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = os.getenv('SECRET_KEY')
     POSTS_PER_PAGE = int(os.getenv('POSTS_PER_PAGE'))
+    YOUR_ACCESS_KEY = os.getenv('YOUR_ACCESS_KEY')
 
 
 CONFIG = Config()
