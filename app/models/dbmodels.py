@@ -1,11 +1,13 @@
-from app import db
+from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
 
-class Manager(db.Model):
+class Manager(UserMixin, db.Model):
     __tablename__ = 'manager'
+
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(50), unique=True)
+    email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
 
     def set_password(self, password: str):
@@ -20,11 +22,12 @@ class Manager(db.Model):
 
 class Employee(db.Model):
     __tablename__ = 'employee'
+
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50))
-    last_name = db.Column(db.String(50))
+    name = db.Column(db.String(50), index=True)
+    last_name = db.Column(db.String(50), index=True)
     nickname = db.Column(db.String(50))
-    main_technology = db.Column(db.String(50))
+    main_technology = db.Column(db.String(50), index=True)
     status = db.Column(db.String(15))
     employee_data = db.relationship(
         'EmployeeData',
@@ -49,6 +52,7 @@ class Employee(db.Model):
 
 class EmployeeData(db.Model):
     __tablename__ = 'employee_data'
+
     id = db.Column(db.Integer, primary_key=True)
     cv = db.Column(db.Text, nullable=True)
     additional_data = db.Column(db.Text, nullable=True)
@@ -62,3 +66,8 @@ class EmployeeData(db.Model):
 
     def __repr__(self):
         return f'<User {self.employee_id}>'
+
+
+@login.user_loader
+def load_user(id: str):
+    return Manager.query.get(int(id))
