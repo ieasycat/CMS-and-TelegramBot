@@ -25,8 +25,8 @@ def technology_filter():
 @bp.route('employees/search', methods=['GET'])
 def employee_search():
     data = request.get_json() or {}
-    if 'name' not in data or 'last_name' not in data:
-        return bad_request('must include name and last name fields')
+    if 'name' not in data and 'last_name' not in data and 'nickname' not in data:
+        return bad_request('must include name or last name or nickname fields')
     return jsonify(ApiController.employee_search(data))
 
 

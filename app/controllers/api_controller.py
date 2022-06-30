@@ -1,5 +1,5 @@
 from flask_sqlalchemy import BaseQuery
-from sqlalchemy import and_
+from sqlalchemy import or_
 from app.models.dbmodels import Employee, EmployeeData
 from app import db
 
@@ -92,9 +92,15 @@ class ApiController:
 
     @classmethod
     def employee_search(cls, data: dict) -> dict:
+        print(data)
         return cls.to_collection_dict(
             Employee.query.filter(
-                and_(Employee.name == data['name'].capitalize(), Employee.last_name == data['last_name'].capitalize()))
+                or_(
+                    Employee.name == data['name'].capitalize() if 'name' in data else None,
+                    Employee.last_name == data['last_name'].capitalize() if 'last_name' in data else None,
+                    Employee.nickname == data['nickname'].capitalize() if 'nickname' in data else None
+                )
+            )
         )
 
     @staticmethod
