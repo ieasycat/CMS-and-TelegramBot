@@ -1,5 +1,4 @@
-from app import app
-from flask import url_for
+from flask import url_for, current_app
 from flask_sqlalchemy import Pagination
 import requests
 
@@ -23,10 +22,11 @@ class UrlController:
     @staticmethod
     def weather_request(city='Minsk') -> tuple:
         data = requests.get(
-            f'http://api.weatherstack.com//current?access_key={app.config["YOUR_ACCESS_KEY"]}&query={city}').json()
+            f'http://api.openweathermap.org/data/2.5/find?q={city}&type=like&'
+            f'APPID={current_app.config["YOUR_ACCESS_KEY"]}&units=metric&lang=ru'
+        ).json()
 
-        loc_info = {'region': data['location']['region'], 'time': data['location']['localtime'].split()[1]}
-        weather_info = {'temperature': data['current']['temperature'],
-                        'weather_icons': data['current']['weather_icons'][0]}
+        loc_info = {'region': data['list'][0]['name']}
+        weather_info = {'temperature': data['list'][0]['main']['temp']}
 
         return loc_info, weather_info

@@ -6,26 +6,35 @@ from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from config import CONFIG
 
-app = Flask(__name__)
-
-app.config.from_object(CONFIG)
-
-login = LoginManager(app)
-bootstrap = Bootstrap(app)
-mail = Mail(app)
-
-login.login_view = 'login'
+db = SQLAlchemy()
+migrate = Migrate()
+login = LoginManager()
+login.login_view = 'auth.login'
 login.login_message = 'Please log in to see this page!'
-
-db = SQLAlchemy(app)
-
-migrate = Migrate(app, db)
-
-from app.models import dbmodels
-from app.views import view, authorization
-from app.views.view import mod
-
-app.register_blueprint(mod)
+mail = Mail()
+bootstrap = Bootstrap()
 
 
+def create_app(config_class=CONFIG):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
 
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login.init_app(app)
+    mail.init_app(app)
+    bootstrap.init_app(app)
+
+    from app.auth.authorization import auth
+    app.register_blueprint(auth, url_prefix='/auth')
+
+    from app.views.view import main, bp
+    app.register_blueprint(main)
+    app.register_blueprint(bp, url_prefix='/employee')
+
+    from app.api import bp as api_bp
+    app.register_blueprint(api_bp, url_prefix='/api')
+
+    from app.models import dbmodels
+
+    return app

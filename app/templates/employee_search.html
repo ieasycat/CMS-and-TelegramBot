@@ -9,8 +9,7 @@
         </form>
         <form class="navbar-form navbar-left" method="post" action=''>
             {{ context.form_search.csrf_token }}
-            {{ context.form_search.name.label }}: {{ context.form_search.name }}
-            {{ context.form_search.last_name.label }}: {{ context.form_search.last_name }}
+            {{ context.form_search.search.label }}: {{ context.form_search.search(placeholder='Nickname or Name or Last name', size=30) }}
             {{ context.form_search.submit }}
         </form>
     </div>

@@ -1,9 +1,9 @@
-from app import db, app
+from app import db
 from app.models.dbmodels import Manager, Employee, EmployeeData
 from app.models.forms import AddEmployeeForm, TechnologyFilterForm, EmployeeSearchForm, RegistrationForm
-from flask import redirect, url_for
+from flask import redirect, url_for, current_app
 from flask_sqlalchemy import Pagination
-from sqlalchemy import and_
+from sqlalchemy import or_
 import urllib.parse
 from werkzeug.wrappers.response import Response
 
@@ -12,7 +12,8 @@ class EmployeeController:
 
     @staticmethod
     def get_all_employees(page: int) -> Pagination:
-        return db.session.query(Employee).order_by(Employee.id).paginate(page, app.config['POSTS_PER_PAGE'], False)
+        return db.session.query(Employee).order_by(Employee.id).\
+            paginate(page, current_app.config['POSTS_PER_PAGE'], False)
 
     @staticmethod
     def get_employee(employee_id: int) -> Employee:
@@ -21,13 +22,16 @@ class EmployeeController:
     @staticmethod
     def technology_filter(main_technology: str, page: int) -> Pagination:
         return db.session.query(Employee).filter_by(main_technology=main_technology).\
-            order_by(Employee.id).paginate(page, app.config['POSTS_PER_PAGE'], False)
+            order_by(Employee.id).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
 
     @staticmethod
-    def employee_search(name: str, last_name: str, page: int) -> Pagination:
-        return db.session.query(Employee).filter(and_(
-            Employee.name == name, Employee.last_name == last_name)).\
-            order_by(Employee.id).paginate(page, app.config['POSTS_PER_PAGE'], False)
+    def employee_search(data: str, page: int) -> Pagination:
+        return db.session.query(Employee).filter(or_(
+            Employee.name == data.capitalize(),
+            Employee.nickname == data.capitalize(),
+            Employee.last_name == data.capitalize()
+        )
+        ).order_by(Employee.id).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
 
     @staticmethod
     def change_status(employee_id: int):
@@ -43,8 +47,8 @@ class EmployeeController:
     def add_employee(form: AddEmployeeForm):
         try:
             user = Employee(
-                name=form.name.data,
-                last_name=form.last_name.data,
+                name=form.name.data.capitalize(),
+                last_name=form.last_name.data.capitalize(),
                 main_technology=form.main_technology.data,
                 status=form.status.data,
             )
@@ -69,8 +73,8 @@ class EmployeeController:
     @staticmethod
     def update_employee(user: Employee, form: AddEmployeeForm):
         try:
-            user.name = form.name.data
-            user.last_name = form.last_name.data
+            user.name = form.name.data.capitalize()
+            user.last_name = form.last_name.data.capitalize()
             user.main_technology = form.main_technology.data
             user.status = form.status.data
             user.employee_data.cv = form.cv.data
@@ -101,9 +105,8 @@ class EmployeeController:
             return redirect(url_for('employee.technology_filter', main_technology=main_technology))
 
         if form_search.validate_on_submit():
-            name = form_search.name.data
-            last_name = form_search.last_name.data
-            return redirect(url_for('employee.employee_search', name=name, last_name=last_name))
+            data = form_search.search.data
+            return redirect(url_for('employee.employee_search', data=data))
 
 
 class ManagerController:
@@ -127,7 +130,7 @@ class ManagerController:
     @staticmethod
     def check_manager(user: Manager, password: str) -> Response:
         if user is None or not user.check_password(password):
-            return redirect(url_for('login'))
+            return redirect(url_for('auth.login'))
 
     @staticmethod
     def change_password(user: Manager, new_password: str):
