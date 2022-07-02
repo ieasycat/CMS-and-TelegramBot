@@ -1,9 +1,9 @@
 from app import app
-from app.controllers.user_db_controller import EmployeeController, ManagerController, UrlController
-from app.models.forms import AddEmployeeForm, TechnologyFilterForm, \
-    EmployeeSearchForm, RegistrationForm, LoginForm, UpdateEmployeeForm
-from flask import render_template, redirect, url_for, Blueprint, request, flash
-from flask_login import current_user, login_user, logout_user, login_required
+from app.controllers.user_db_controller import EmployeeController
+from app.controllers.url_controller import UrlController
+from app.models.forms import AddEmployeeForm, TechnologyFilterForm, EmployeeSearchForm, UpdateEmployeeForm
+from flask import render_template, redirect, url_for, Blueprint, request
+from flask_login import login_required
 import urllib.parse
 
 
@@ -36,49 +36,6 @@ def main_page(page=1):
         return form
 
     return render_template('main.html', context=context)
-
-
-@app.route('/registration', methods=['GET', 'POST'])
-def registration():
-    form = RegistrationForm()
-
-    if current_user.is_authenticated:
-        return redirect((url_for('main_page')))
-
-    if form.validate_on_submit():
-        ManagerController.add_manager(form)
-        flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('login'))
-
-    return render_template('registration.html', form=form)
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect((url_for('main_page')))
-
-    form = LoginForm()
-
-    if form.validate_on_submit():
-        user = ManagerController.get_manager(email=form.email.data)
-        check_manager = ManagerController.check_manager(user=user, password=form.password.data)
-
-        if check_manager:
-            flash('Invalid username or password')
-            return check_manager
-
-        login_user(user, remember=form.remember_me.data)
-
-        return redirect(url_for('main_page'))
-
-    return render_template('login.html', form=form)
-
-
-@app.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('login'))
 
 
 @mod.route('/technology_filter/<string:main_technology>', methods=['GET', 'POST'])

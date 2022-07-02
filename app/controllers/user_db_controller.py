@@ -1,20 +1,18 @@
-from app import db
+from app import db, app
 from app.models.dbmodels import Manager, Employee, EmployeeData
 from app.models.forms import AddEmployeeForm, TechnologyFilterForm, EmployeeSearchForm, RegistrationForm
 from flask import redirect, url_for
 from flask_sqlalchemy import Pagination
 from sqlalchemy import and_
-from config import CONFIG
 import urllib.parse
 from werkzeug.wrappers.response import Response
-import requests
 
 
 class EmployeeController:
 
     @staticmethod
     def get_all_employees(page: int) -> Pagination:
-        return db.session.query(Employee).order_by(Employee.id).paginate(page, CONFIG.POSTS_PER_PAGE, False)
+        return db.session.query(Employee).order_by(Employee.id).paginate(page, app.config['POSTS_PER_PAGE'], False)
 
     @staticmethod
     def get_employee(employee_id: int) -> Employee:
@@ -23,13 +21,13 @@ class EmployeeController:
     @staticmethod
     def technology_filter(main_technology: str, page: int) -> Pagination:
         return db.session.query(Employee).filter_by(main_technology=main_technology).\
-            order_by(Employee.id).paginate(page, CONFIG.POSTS_PER_PAGE, False)
+            order_by(Employee.id).paginate(page, app.config['POSTS_PER_PAGE'], False)
 
     @staticmethod
     def employee_search(name: str, last_name: str, page: int) -> Pagination:
         return db.session.query(Employee).filter(and_(
             Employee.name == name, Employee.last_name == last_name)).\
-            order_by(Employee.id).paginate(page, CONFIG.POSTS_PER_PAGE, False)
+            order_by(Employee.id).paginate(page, app.config['POSTS_PER_PAGE'], False)
 
     @staticmethod
     def change_status(employee_id: int):
@@ -131,30 +129,12 @@ class ManagerController:
         if user is None or not user.check_password(password):
             return redirect(url_for('login'))
 
-
-class UrlController:
-
     @staticmethod
-    def get_next_url(endpoint: str, pagination: Pagination, parameter=None) -> str or None:
-        if parameter:
-            return url_for(endpoint, **parameter, page=pagination.next_num) if pagination.has_next else None
-        else:
-            return url_for(endpoint, page=pagination.next_num) if pagination.has_next else None
-
-    @staticmethod
-    def get_prev_url(endpoint: str, pagination: Pagination, parameter=None) -> str or None:
-        if parameter:
-            return url_for(endpoint, **parameter, page=pagination.prev_num) if pagination.has_prev else None
-        else:
-            return url_for(endpoint, page=pagination.prev_num) if pagination.has_prev else None
-
-    @staticmethod
-    def weather_request(city='Minsk'):
-        data = requests.get(
-            f'http://api.weatherstack.com//current?access_key={CONFIG.YOUR_ACCESS_KEY}&query={city}').json()
-
-        loc_info = {'region': data['location']['region'], 'time': data['location']['localtime'].split()[1]}
-        weather_info = {'temperature': data['current']['temperature'],
-                        'weather_icons': data['current']['weather_icons'][0]}
-
-        return loc_info, weather_info
+    def change_password(user: Manager, new_password: str):
+        try:
+            user.set_password(password=new_password)
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+        finally:
+            db.session.close()
