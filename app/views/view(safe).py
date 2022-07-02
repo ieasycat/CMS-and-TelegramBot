@@ -14,17 +14,21 @@ mod = Blueprint('employee', __name__, url_prefix='/employee')
 def main_page(page=1):
     form_filter = TechnologyFilter()
     form_search = EmployeeSearch()
-    employees = EmployeeController.get_all_employees(page=page)
+    employees = EmployeeController.get_all_employees(page)
     context = {
         'form_filter': form_filter,
         'form_search': form_search,
         'employees': employees,
     }
 
-    form = EmployeeController.form_validate_on_submit(form_filter=form_filter, form_search=form_search)
+    if form_filter.validate_on_submit():
+        main_technology = urllib.parse.quote(form_filter.main_technology.data, safe='')
+        return redirect(url_for('employee.technology_filter', main_technology=main_technology))
 
-    if form:
-        return form
+    if form_search.validate_on_submit():
+        name = form_search.name.data
+        last_name = form_search.last_name.data
+        return redirect(url_for('employee.search', name=name, last_name=last_name))
 
     return render_template('main.html', context=context)
 
@@ -35,10 +39,14 @@ def technology_filter(main_technology: str, page=1):
     form_filter = TechnologyFilter(main_technology=urllib.parse.unquote(main_technology))
     form_search = EmployeeSearch()
 
-    form = EmployeeController.form_validate_on_submit(form_filter=TechnologyFilter(), form_search=form_search)
+    if form_filter.validate_on_submit():
+        main_technology = urllib.parse.quote(form_filter.main_technology.data, safe='')
+        return redirect(url_for('employee.technology_filter', main_technology=main_technology))
 
-    if form:
-        return form
+    if form_search.validate_on_submit():
+        name = form_search.name.data
+        last_name = form_search.last_name.data
+        return redirect(url_for('employee.search', name=name, last_name=last_name))
 
     employees = EmployeeController.technology_filter(urllib.parse.unquote(main_technology), page)
     context = {
@@ -56,10 +64,14 @@ def employee_search(name: str, last_name: str, page=1):
     form_filter = TechnologyFilter()
     form_search = EmployeeSearch(name=name, last_name=last_name)
 
-    form = EmployeeController.form_validate_on_submit(form_filter=form_filter, form_search=EmployeeSearch())
+    if form_filter.validate_on_submit():
+        main_technology = urllib.parse.quote(form_filter.main_technology.data, safe='')
+        return redirect(url_for('employee.technology_filter', main_technology=main_technology))
 
-    if form:
-        return form
+    if form_search.validate_on_submit():
+        name = form_search.name.data
+        last_name = form_search.last_name.data
+        return redirect(url_for('employee.search', name=name, last_name=last_name))
 
     employees = EmployeeController.employee_search(name=name, last_name=last_name, page=page)
     context = {

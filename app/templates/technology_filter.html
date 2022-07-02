@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="option" >
+    <form action = "{{ url_for('employee.add_user') }}" method="get">
+        <button>Add person</button>
+    </form>
+</div>
+<div class="option" >
+<form method="post" action="">
+    {{ context.form_filter.csrf_token }}
+    {{ context.form_filter.main_technology.label }}: {{ context.form_filter.main_technology }}
+    <input type="submit" value="Filter">
+</form>
+</div>
+<div class="option">
+<form method="get" action="{{ url_for('main_page') }}">
+    <input type="submit" value="Reset">
+</form>
+</div>
+<form method="post" action='' >
+    {{ context.form_search.csrf_token }}
+    {{ context.form_search.name.label }}: {{ context.form_search.name }}
+    {{ context.form_search.last_name.label }}: {{ context.form_search.last_name }}
+    <input type="submit" value="Search">
+</form>
+<div align="center">
+    <hr>
+    <table border=1>
+        <tr>
+            <td>Name</td>
+            <td>Last name</td>
+            <td>Nickname</td>
+            <td>Main technology</td>
+            <td>Status</td>
+            <td>CV</td>
+            <td>User actions</td>
+        </tr>
+        {% for employee in context.employees.items  %}
+        <tr>
+            <td>{{ employee.name }}</td>
+            <td>{{ employee.last_name }}</td>
+            <td>{{ employee.nickname }}</td>
+            <td>{{ employee.main_technology }}</td>
+            <td>{{ employee.status }}</td>
+            <td>{{ employee.employee_data.cv }}</td>
+            <td>
+                <div class="my_button">
+                <form action = "{{ url_for('employee.update_status', employee_id = employee.id) }}" method="post">
+                    <button>Change status</button>
+                </form>
+                </div>
+                <div class="my_button">
+                <form action = "{{ url_for('employee.update_user', employee_id = employee.id) }}" method="get">
+                    <button>Update person</button>
+                </form>
+                </div>
+                <div class="my_button">
+                <form action = "{{ url_for('employee.delete_user', employee_id = employee.id) }}" method="post">
+                    <button>Delete person</button>
+                </form>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+<div align="center">
+    <p>
+    {% if context.employees.has_prev %}<a href="{{ url_for('employee.technology_filter', main_technology = context.main_technology, page = context.employees.prev_num) }}"><button><< Previous page </button></a>{% else %}<button><< Previous page</button> {% endif %} |
+    {% if context.employees.has_next %}<a href="{{ url_for('employee.technology_filter', main_technology = context.main_technology, page = context.employees.next_num) }}"><button>Next page >></button></a>{% else %}<button>Next page >></button>{% endif %}
+    </p>
+</div>
+{% endblock %}

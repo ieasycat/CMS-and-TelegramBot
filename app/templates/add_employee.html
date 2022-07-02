@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+<div align="center">
     <form method="POST" action="">
 
             {{ form.csrf_token }}
@@ -18,9 +19,8 @@
 
         <input type="submit" value="Done">
     </form>
-    <p>
-        <form action = "{{ url_for('main_page') }}" method="get">
-            <button>Home</button>
-        </form>
-    </p>
+    <form action = "{{ url_for('main_page') }}" method="get">
+        <p><button>Home</button></p>
+    </form>
+</div>
 {% endblock %}
