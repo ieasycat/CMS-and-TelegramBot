@@ -2,9 +2,21 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
+    <div class="media-body">
+        <h4 class="text-right">
+            <b>The weather is now.</b>
+        </h4>
+        <p class="text-right">
+            <b>Region</b>: {{ context.weather_loc_info.region }}
+            <b>Time</b>: {{ context.weather_loc_info.time }}
+            <b>Temp</b>: {{ context.weather_info.temperature }}
+        </p>
+    </div>
+    <div class="media-right">
+        <img style="width:60px" class="media-object" src="{{ context.weather_info.weather_icons }}" alt="Weather display">
+    </div>
     <div class="container-fluid">
         <form class="navbar-form navbar-left" method="post" action="">
-
             {{ context.form_filter.csrf_token }}
             {{ context.form_filter.main_technology.label }}: {{ context.form_filter.main_technology }}
             {{ context.form_filter.submit }}
@@ -15,8 +27,8 @@
             {{ context.form_search.last_name.label }}: {{ context.form_search.last_name }}
             {{ context.form_search.submit }}
         </form>
-    </div>
 
+    </div>
     <div class="panel panel-default">
         <table class="table table-hover table-bordered">
             <tr>

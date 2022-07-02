@@ -1,7 +1,7 @@
 from app import app
 from app.controllers.user_db_controller import EmployeeController
 from flask import render_template, redirect, url_for, Blueprint, request
-from app.models.forms import AddEmployeeForm, TechnologyFilter, EmployeeSearch
+from app.models.forms import AddEmployeeForm, TechnologyFilterForm, EmployeeSearchForm
 import urllib.parse
 
 
@@ -12,8 +12,8 @@ mod = Blueprint('employee', __name__, url_prefix='/employee')
 @app.route('/index', methods=['GET', 'POST'])
 @app.route('/index/<int:page>', methods=['GET', 'POST'])
 def main_page(page=1):
-    form_filter = TechnologyFilter()
-    form_search = EmployeeSearch()
+    form_filter = TechnologyFilterForm()
+    form_search = EmployeeSearchForm()
     employees = EmployeeController.get_all_employees(page)
     context = {
         'form_filter': form_filter,
@@ -36,8 +36,8 @@ def main_page(page=1):
 @mod.route('/technology_filter/<string:main_technology>', methods=['GET', 'POST'])
 @mod.route('/technology_filter/<string:main_technology>/<int:page>', methods=['GET', 'POST'])
 def technology_filter(main_technology: str, page=1):
-    form_filter = TechnologyFilter(main_technology=urllib.parse.unquote(main_technology))
-    form_search = EmployeeSearch()
+    form_filter = TechnologyFilterForm(main_technology=urllib.parse.unquote(main_technology))
+    form_search = EmployeeSearchForm()
 
     if form_filter.validate_on_submit():
         main_technology = urllib.parse.quote(form_filter.main_technology.data, safe='')
@@ -61,8 +61,8 @@ def technology_filter(main_technology: str, page=1):
 @mod.route('/search/<string:name>?<string:last_name>', methods=['GET', 'POST'])
 @mod.route('/search/<string:name>?<string:last_name>/<int:page>', methods=['GET', 'POST'])
 def employee_search(name: str, last_name: str, page=1):
-    form_filter = TechnologyFilter()
-    form_search = EmployeeSearch(name=name, last_name=last_name)
+    form_filter = TechnologyFilterForm()
+    form_search = EmployeeSearchForm(name=name, last_name=last_name)
 
     if form_filter.validate_on_submit():
         main_technology = urllib.parse.quote(form_filter.main_technology.data, safe='')

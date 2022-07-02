@@ -7,6 +7,7 @@ from sqlalchemy import and_
 from config import CONFIG
 import urllib.parse
 from werkzeug.wrappers.response import Response
+import requests
 
 
 class EmployeeController:
@@ -146,3 +147,14 @@ class UrlController:
             return url_for(endpoint, **parameter, page=pagination.prev_num) if pagination.has_prev else None
         else:
             return url_for(endpoint, page=pagination.prev_num) if pagination.has_prev else None
+
+    @staticmethod
+    def weather_request(city='Minsk'):
+        data = requests.get(
+            f'http://api.weatherstack.com//current?access_key={CONFIG.YOUR_ACCESS_KEY}&query={city}').json()
+
+        loc_info = {'region': data['location']['region'], 'time': data['location']['localtime'].split()[1]}
+        weather_info = {'temperature': data['current']['temperature'],
+                        'weather_icons': data['current']['weather_icons'][0]}
+
+        return loc_info, weather_info
