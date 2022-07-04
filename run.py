@@ -8,5 +8,6 @@ app = create_app()
 def make_shell_context():
     return {'db': db, 'Manager': Manager, 'Employee': Employee, 'EmployeeData': EmployeeData}
 
+
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

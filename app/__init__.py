@@ -25,7 +25,7 @@ def create_app(config_class=CONFIG):
     mail.init_app(app)
     bootstrap.init_app(app)
 
-    from app.auth.authorization import auth
+    from app.views.authorization import auth
     app.register_blueprint(auth, url_prefix='/auth')
 
     from app.views.view import main, bp

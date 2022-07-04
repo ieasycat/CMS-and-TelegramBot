@@ -1,15 +1,9 @@
 from flask import jsonify
-from werkzeug.http import HTTP_STATUS_CODES
+from app.api import bp
+from app.api.models.employee_models import APIError
+from flask import Response
 
 
-def error_response(status_code, message=None):
-    payload = {'error': HTTP_STATUS_CODES.get(status_code, 'Unknown error')}
-    if message:
-        payload['message'] = message
-    response = jsonify(payload)
-    response.status_code = status_code
-    return response
-
-
-def bad_request(message):
-    return error_response(400, message)
+@bp.errorhandler(APIError)
+def invalid_api_validation(e: APIError) -> Response:
+    return jsonify(e.to_dict())
