@@ -26,9 +26,6 @@ class EmployeeFilterRequest:
 @dataclass
 class EmployeeSearchRequest:
     data: str
-    # name: Optional[str] = None
-    # last_name: Optional[str] = None
-    # nickname: Optional[str] = None
 
 
 @dataclass_validate
@@ -57,14 +54,6 @@ class ResponseModel:
 
     @staticmethod
     def response_ok(message: str = 'OK', code: HTTPStatus = HTTPStatus.OK) -> dict:
+        """Notifies the status code (OK) and message"""
+
         return {'code': code, 'message': message}
-
-
-class APIError(Exception):
-    def __init__(self, message, code: HTTPStatus = HTTPStatus.BAD_REQUEST):
-        super().__init__()
-        self.message = message
-        self.code = code
-
-    def to_dict(self) -> dict:
-        return {'message': self.message, 'code': self.code}

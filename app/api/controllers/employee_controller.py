@@ -89,7 +89,7 @@ class ApiController:
     @classmethod
     def technology_filter(cls, data: EmployeeFilterRequest) -> dict:
         return cls.to_collection_dict(
-            Employee.query.filter_by(main_technology=data.main_technology.capitalize())
+            Employee.query.filter_by(main_technology=data.main_technology)
         )
 
     @classmethod

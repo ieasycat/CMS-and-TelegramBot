@@ -6,6 +6,7 @@ from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from config import CONFIG
 
+
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
