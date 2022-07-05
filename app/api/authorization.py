@@ -1,5 +1,5 @@
 from app.models.dbmodels import Manager
-from app.api import auth
+from app.api import auth, token_auth
 from flask import g
 
 
@@ -10,3 +10,9 @@ def verify_password(email: str, password: str) -> bool:
         return False
     g.user = user
     return True
+
+
+@token_auth.verify_token
+def verify_token(token):
+    g.user = Manager.check_token(token) if token else None
+    return g.user is not None

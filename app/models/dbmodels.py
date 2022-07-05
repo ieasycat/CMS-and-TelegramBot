@@ -1,3 +1,5 @@
+import base64
+import os
 from app import db, login
 from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -12,6 +14,21 @@ class Manager(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+    token = db.Column(db.String(32), index=True, unique=True)
+
+    def get_token(self):
+        if self.token:
+            return self.token
+        self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
+        db.session.add(self)
+        return self.token
+
+    @staticmethod
+    def check_token(token):
+        user = Manager.query.filter_by(token=token).first()
+        if not user:
+            return None
+        return user
 
     def set_password(self, password: str):
         self.password_hash = generate_password_hash(password)
