@@ -1,4 +1,4 @@
-from app.controllers.employee_controller import EmployeeController
+from app.controllers.employee_db_controller import EmployeeController
 from app.controllers.url_controller import UrlController
 from app.models.forms import AddEmployeeForm, TechnologyFilterForm, EmployeeSearchForm, UpdateEmployeeForm
 from flask import render_template, redirect, url_for, request

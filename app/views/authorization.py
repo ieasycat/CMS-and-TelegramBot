@@ -1,6 +1,6 @@
 from app.models.forms import RegistrationForm, LoginForm, ResetPasswordRequestForm, ResetPasswordForm
 from app.models.dbmodels import Manager
-from app.controllers.manager_controller import ManagerController
+from app.controllers.manager_db_controller import ManagerController
 from app.controllers.email_controller import EmailController
 from flask import redirect, url_for, flash, render_template
 from flask_login import current_user, login_user, logout_user

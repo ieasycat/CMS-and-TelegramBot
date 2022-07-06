@@ -16,11 +16,15 @@ class Manager(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     token = db.Column(db.String(32), index=True, unique=True)
 
+    def generate_token(self):
+        self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
+        db.session.add(self)
+        return self.token
+
     def get_token(self):
         if self.token:
             return self.token
-        self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
-        db.session.add(self)
+        self.generate_token()
         return self.token
 
     @staticmethod

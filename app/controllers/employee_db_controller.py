@@ -27,9 +27,9 @@ class EmployeeController:
     @staticmethod
     def employee_search(data: str, page: int) -> Pagination:
         return db.session.query(Employee).filter(or_(
-            Employee.name.like(f'{data.capitalize()}%'),
-            Employee.nickname.like(f'{data.capitalize()}%'),
-            Employee.last_name.like(f'{data.capitalize()}%')
+            Employee.name.like(f'%{data}%'),
+            Employee.nickname.like(f'%{data}%'),
+            Employee.last_name.like(f'%{data}%')
         )
         ).order_by(Employee.id).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
 

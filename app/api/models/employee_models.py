@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from dataclass_type_validator import dataclass_validate
-from typing import Optional
+from typing import Optional, List
 from http import HTTPStatus
 
 
@@ -14,6 +14,11 @@ class EmployeeResponse:
     status: str
     cv: Optional[str] = None
     additional_data: Optional[str] = None
+
+
+@dataclass
+class GetEmployeesResponse:
+    employees: List[EmployeeResponse]
 
 
 @dataclass_validate
@@ -55,5 +60,11 @@ class ResponseModel:
     @staticmethod
     def response_ok(message: str = 'OK', code: HTTPStatus = HTTPStatus.OK) -> dict:
         """Notifies the status code (OK) and message"""
+
+        return {'code': code, 'message': message}
+
+    @staticmethod
+    def response_created(message: str = 'OK', code: HTTPStatus = HTTPStatus.CREATED) -> dict:
+        """Notifies the status code (CREATED) and message"""
 
         return {'code': code, 'message': message}

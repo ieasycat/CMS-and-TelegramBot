@@ -10,10 +10,7 @@ class APIError(Exception):
         self.message = message
         self.code = code
 
-    def to_dict(self) -> dict:
-        return {'message': self.message, 'code': self.code}
-
 
 @bp.errorhandler(APIError)
 def invalid_api_validation(e: APIError) -> Response:
-    return jsonify(e.to_dict())
+    return jsonify(e.__dict__)
