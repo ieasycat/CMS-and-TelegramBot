@@ -6,7 +6,7 @@ app = create_app()
 
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'Manager': Manager, 'Employee': Employee, 'EmployeeData': EmployeeData}
+    return {'app': app, 'db': db, 'Manager': Manager, 'Employee': Employee, 'EmployeeData': EmployeeData}
 
 
 if __name__ == '__main__':
