@@ -1,6 +1,6 @@
 from app import db
 from app.models.dbmodels import Employee, EmployeeData
-from app.models.forms import AddEmployeeForm, TechnologyFilterForm, EmployeeSearchForm
+from app.models.forms import AddEmployeeForm, TechnologyFilterForm, EmployeeSearchForm, UpdateEmployeeForm
 from flask import redirect, url_for, current_app
 from flask_sqlalchemy import Pagination
 from sqlalchemy import or_
@@ -40,8 +40,6 @@ class EmployeeController:
             db.session.commit()
         except Exception:
             db.session.rollback()
-        finally:
-            db.session.close()
 
     @staticmethod
     def add_employee(form: AddEmployeeForm):
@@ -67,26 +65,20 @@ class EmployeeController:
             db.session.commit()
         except Exception:
             db.session.rollback()
-        finally:
-            db.session.close()
 
     @staticmethod
-    def update_employee(user: Employee, form: AddEmployeeForm):
+    def update_employee(employee: Employee, form: UpdateEmployeeForm):
         try:
-            user.name = form.name.data.capitalize()
-            user.last_name = form.last_name.data.capitalize()
-            user.main_technology = form.main_technology.data
-            user.status = form.status.data
-            user.employee_data.cv = form.cv.data
-            user.employee_data.additional_data = form.additional_data.data
+            employee.name = form.name.data.capitalize()
+            employee.last_name = form.last_name.data.capitalize()
+            employee.main_technology = form.main_technology.data
+            employee.status = form.status.data
+            employee.employee_data.cv = form.cv.data
+            employee.employee_data.additional_data = form.additional_data.data
             db.session.flush()
-
             db.session.commit()
-
         except Exception:
             db.session.rollback()
-        finally:
-            db.session.close()
 
     @staticmethod
     def delete_employee(employee_id: int):
@@ -95,8 +87,6 @@ class EmployeeController:
             db.session.commit()
         except Exception:
             db.session.rollback()
-        finally:
-            db.session.close()
 
     @staticmethod
     def form_validate_on_submit(form_filter: TechnologyFilterForm, form_search: EmployeeSearchForm) -> Response:

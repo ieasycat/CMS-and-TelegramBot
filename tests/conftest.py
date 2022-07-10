@@ -1,15 +1,16 @@
 import pytest
 from flask import url_for
-
 from app import create_app, db
 from app.controllers.manager_db_controller import ManagerController
-from app.models.dbmodels import Manager
-from app.models.forms import RegistrationForm
+from app.controllers.employee_db_controller import EmployeeController
+from app.models.dbmodels import Manager, Employee
+from app.models.forms import RegistrationForm, AddEmployeeForm
+
 
 # pytest_plugins = []
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture
 def app():
     app = create_app()
     app.config.update({
@@ -19,6 +20,7 @@ def app():
             })
 
     with app.app_context(), app.test_request_context():
+        db.expire_on_commit = False
         db.create_all()
         yield app
         db.session.commit()
@@ -44,3 +46,31 @@ def auth_login(user, client):
         'email': user.email,
         'password': '9215765'
     })
+
+
+@pytest.fixture
+def employee(app):
+    test_form = AddEmployeeForm(
+        name='Test',
+        last_name='Tester',
+        main_technology='Python',
+        status='Free',
+        cv='Testing'
+    )
+    EmployeeController.add_employee(test_form)
+    employee = db.session.query(Employee).filter_by(name='Test').first()
+    return employee
+
+
+@pytest.fixture
+def token_reset_password(user):
+    return user.get_reset_password_token()
+
+
+@pytest.fixture
+def user_headers(user):
+    headers = {
+        'Authorization': f'Bearer {user.get_token()}'
+    }
+
+    return headers

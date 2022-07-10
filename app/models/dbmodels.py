@@ -8,7 +8,7 @@ from time import time
 import jwt
 
 
-class Manager(UserMixin, db.Model):
+class Manager(db.Model, UserMixin):
     __tablename__ = 'manager'
 
     id = db.Column(db.Integer, primary_key=True)

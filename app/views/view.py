@@ -107,7 +107,7 @@ def update_user(employee_id: int):
                               additional_data=employee.employee_data.additional_data)
 
     if form.validate_on_submit():
-        EmployeeController.update_employee(user=employee, form=form)
+        EmployeeController.update_employee(employee=employee, form=form)
         return redirect(url_for('main.index'))
 
     return render_template('update_employee.html', form=form)
