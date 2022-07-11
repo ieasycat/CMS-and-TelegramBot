@@ -20,7 +20,6 @@ def app():
             })
 
     with app.app_context(), app.test_request_context():
-        db.expire_on_commit = False
         db.create_all()
         yield app
         db.session.commit()
