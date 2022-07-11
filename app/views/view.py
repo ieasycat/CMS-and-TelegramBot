@@ -1,20 +1,17 @@
-from app import app
-from app.controllers.user_db_controller import EmployeeController
+from app.controllers.employee_db_controller import EmployeeController
 from app.controllers.url_controller import UrlController
 from app.models.forms import AddEmployeeForm, TechnologyFilterForm, EmployeeSearchForm, UpdateEmployeeForm
-from flask import render_template, redirect, url_for, Blueprint, request
+from flask import render_template, redirect, url_for, request
 from flask_login import login_required
 import urllib.parse
+from app.views import main, bp
 
 
-mod = Blueprint('employee', __name__, url_prefix='/employee')
-
-
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/index', methods=['GET', 'POST'])
-@app.route('/index/<int:page>', methods=['GET', 'POST'])
+@main.route('/', methods=['GET', 'POST'])
+@main.route('/index', methods=['GET', 'POST'])
+@main.route('/index/<int:page>', methods=['GET', 'POST'])
 @login_required
-def main_page(page=1):
+def index(page=1):
     form_filter = TechnologyFilterForm()
     form_search = EmployeeSearchForm()
     employees = EmployeeController.get_all_employees(page=page)
@@ -24,8 +21,8 @@ def main_page(page=1):
         'form_filter': form_filter,
         'form_search': form_search,
         'employees': employees,
-        'next_url': UrlController.get_next_url(endpoint='main_page', pagination=employees),
-        'prev_url': UrlController.get_prev_url(endpoint='main_page', pagination=employees),
+        'next_url': UrlController.get_next_url(endpoint='main.index', pagination=employees),
+        'prev_url': UrlController.get_prev_url(endpoint='main.index', pagination=employees),
         'weather_loc_info': weather_loc_info,
         'weather_info': weather_info
     }
@@ -38,8 +35,8 @@ def main_page(page=1):
     return render_template('main.html', context=context)
 
 
-@mod.route('/technology_filter/<string:main_technology>', methods=['GET', 'POST'])
-@mod.route('/technology_filter/<string:main_technology>/<int:page>', methods=['GET', 'POST'])
+@bp.route('/technology_filter/<string:main_technology>', methods=['GET', 'POST'])
+@bp.route('/technology_filter/<string:main_technology>/<int:page>', methods=['GET', 'POST'])
 @login_required
 def technology_filter(main_technology: str, page=1):
     form_filter = TechnologyFilterForm(main_technology=urllib.parse.unquote(main_technology))
@@ -63,44 +60,44 @@ def technology_filter(main_technology: str, page=1):
     return render_template('technology_filter.html', context=context)
 
 
-@mod.route('/search/<string:name>?<string:last_name>', methods=['GET', 'POST'])
-@mod.route('/search/<string:name>?<string:last_name>/<int:page>', methods=['GET', 'POST'])
+@bp.route('/search/<string:data>', methods=['GET', 'POST'])
+@bp.route('/search/<string:data>/<int:page>', methods=['GET', 'POST'])
 @login_required
-def employee_search(name: str, last_name: str, page=1):
+def employee_search(data: str, page=1):
     form_filter = TechnologyFilterForm()
-    form_search = EmployeeSearchForm(name=name, last_name=last_name)
+    form_search = EmployeeSearchForm(search=data)
 
     form = EmployeeController.form_validate_on_submit(form_filter=form_filter, form_search=EmployeeSearchForm())
 
     if form:
         return form
 
-    employees = EmployeeController.employee_search(name=name, last_name=last_name, page=page)
+    employees = EmployeeController.employee_search(data=data, page=page)
     context = {
         'form_filter': form_filter,
         'form_search': form_search,
         'employees': employees,
         'next_url': UrlController.get_next_url(endpoint='employee.employee_search',
-                                               parameter={'name': name, 'last_name': last_name}, pagination=employees),
+                                               parameter={'data': data}, pagination=employees),
         'prev_url': UrlController.get_prev_url(endpoint='employee.employee_search',
-                                               parameter={'name': name, 'last_name': last_name}, pagination=employees)
+                                               parameter={'data': data}, pagination=employees)
     }
     return render_template('employee_search.html', context=context)
 
 
-@mod.route('/add', methods=['GET', 'POST'])
+@bp.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_user():
     form = AddEmployeeForm()
 
     if form.validate_on_submit():
         EmployeeController.add_employee(form=form)
-        return redirect(url_for('main_page'))
+        return redirect(url_for('main.index'))
 
     return render_template('add_employee.html', form=form)
 
 
-@mod.route('/update/<int:employee_id>', methods=['GET', 'POST'])
+@bp.route('/update/<int:employee_id>', methods=['GET', 'POST'])
 @login_required
 def update_user(employee_id: int):
     employee = EmployeeController.get_employee(employee_id)
@@ -111,19 +108,19 @@ def update_user(employee_id: int):
 
     if form.validate_on_submit():
         EmployeeController.update_employee(user=employee, form=form)
-        return redirect(url_for('main_page'))
+        return redirect(url_for('main.index'))
 
     return render_template('update_employee.html', form=form)
 
 
-@mod.route('/update_status/<int:employee_id>', methods=['POST'])
+@bp.route('/update_status/<int:employee_id>', methods=['POST'])
 @login_required
 def update_status(employee_id: int):
     EmployeeController.change_status(employee_id)
     return redirect(request.headers['Referer'])
 
 
-@mod.route('/delete/<int:employee_id>', methods=['POST'])
+@bp.route('/delete/<int:employee_id>', methods=['POST'])
 @login_required
 def delete_user(employee_id: int):
     EmployeeController.delete_employee(employee_id)

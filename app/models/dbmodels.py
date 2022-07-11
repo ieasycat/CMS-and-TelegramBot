@@ -1,4 +1,7 @@
-from app import db, login, app
+import base64
+import os
+from app import db, login
+from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from time import time
@@ -11,6 +14,25 @@ class Manager(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+    token = db.Column(db.String(32), index=True, unique=True)
+
+    def generate_token(self):
+        self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
+        db.session.add(self)
+        return self.token
+
+    def get_token(self):
+        if self.token:
+            return self.token
+        self.generate_token()
+        return self.token
+
+    @staticmethod
+    def check_token(token):
+        user = Manager.query.filter_by(token=token).first()
+        if not user:
+            return None
+        return user
 
     def set_password(self, password: str):
         self.password_hash = generate_password_hash(password)
@@ -21,12 +43,12 @@ class Manager(UserMixin, db.Model):
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
-            app.config['SECRET_KEY'], algorithm='HS256')
+            current_app.config['SECRET_KEY'], algorithm='HS256')
 
     @staticmethod
     def verify_reset_password_token(token):
         try:
-            id = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])['reset_password']
+            id = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])['reset_password']
         except Exception:
             return
         return Manager.query.get(id)

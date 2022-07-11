@@ -8,12 +8,8 @@
         </h4>
         <p class="text-right">
             <b>Region</b>: {{ context.weather_loc_info.region }}
-            <b>Time</b>: {{ context.weather_loc_info.time }}
             <b>Temp</b>: {{ context.weather_info.temperature }}
         </p>
-    </div>
-    <div class="media-right">
-        <img style="width:60px" class="media-object" src="{{ context.weather_info.weather_icons }}" alt="Weather display">
     </div>
     <div class="container-fluid">
         <form class="navbar-form navbar-left" method="post" action="">
@@ -23,8 +19,7 @@
         </form>
         <form class="navbar-form navbar-left" method="post" action=''>
             {{ context.form_search.csrf_token }}
-            {{ context.form_search.name.label }}: {{ context.form_search.name }}
-            {{ context.form_search.last_name.label }}: {{ context.form_search.last_name }}
+            {{ context.form_search.search.label }}: {{ context.form_search.search(placeholder='Nickname or Name or Last name', size=30) }}
             {{ context.form_search.submit }}
         </form>
 
