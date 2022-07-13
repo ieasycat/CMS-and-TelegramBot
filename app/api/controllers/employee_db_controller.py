@@ -42,8 +42,6 @@ class ApiController:
             db.session.commit()
         except Exception:
             db.session.rollback()
-        finally:
-            db.session.close()
 
     @staticmethod
     def update_employee(data: EmployeeUpdateRequest, employee_id: int):
@@ -60,8 +58,6 @@ class ApiController:
             db.session.commit()
         except Exception:
             db.session.rollback()
-        finally:
-            db.session.close()
 
     @staticmethod
     def update_status(employee_id: int):
@@ -73,8 +69,6 @@ class ApiController:
             db.session.commit()
         except Exception:
             db.session.rollback()
-        finally:
-            db.session.close()
 
     @staticmethod
     def delete_employee(employee_id: int):
@@ -83,8 +77,6 @@ class ApiController:
             db.session.commit()
         except Exception:
             db.session.rollback()
-        finally:
-            db.session.close()
 
     @classmethod
     def technology_filter(cls, data: EmployeeFilterRequest) -> list:

@@ -15,8 +15,6 @@ class ManagerController:
             db.session.commit()
         except Exception:
             db.session.rollback()
-        finally:
-            db.session.close()
 
     @staticmethod
     def get_manager(email: str) -> Manager:
@@ -34,5 +32,3 @@ class ManagerController:
             db.session.commit()
         except Exception:
             db.session.rollback()
-        finally:
-            db.session.close()
