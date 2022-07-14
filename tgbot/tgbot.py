@@ -1,6 +1,6 @@
 from telebot import TeleBot, types
 from config import CONFIG
-import requests
+from telegrambot_controllers import TelegramBotController
 
 
 def telegram_bot(token):
@@ -42,15 +42,18 @@ def telegram_bot(token):
     @bot.message_handler(func=lambda message: message.text in level)
     def handler_text(message):
         res = message.text.split()
-        employees = requests.get(CONFIG.URL, json={
-            'main_technology': res[0],
-            'programmer_level': res[1]
-        }, headers=CONFIG.HEADERS).json()['employees']
 
-        for employee in employees:
-            text = f"Level: {employee['programmer_level']}, Nickname: {employee['nickname']},\n" \
-                   f"CV: {employee['cv']}"
-            bot.send_message(message.chat.id, text=text)
+        employees_free = TelegramBotController.get_employee(res=res, status='Free')
+        employees_busy = TelegramBotController.get_employee(res=res, status='Busy', date=30)
+
+        for employee in employees_free:
+            TelegramBotController.send_employee(employee=employee, bot=bot, message=message)
+
+        if employees_busy:
+            bot.send_message(message.chat.id, text='These specialists will be released within a month')
+
+            for employee in employees_busy:
+                TelegramBotController.send_employee(employee=employee, bot=bot, message=message)
 
     bot.polling(none_stop=True, interval=0)
 

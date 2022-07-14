@@ -1,5 +1,6 @@
 from flask_sqlalchemy import BaseQuery
 from sqlalchemy import or_, and_
+from datetime import date
 from app.models.dbmodels import Employee, EmployeeData
 from app.api.models.employee_models import EmployeeResponse, EmployeeAddRequest, EmployeeSearchRequest, \
     EmployeeFilterRequest, EmployeeUpdateRequest
@@ -85,6 +86,19 @@ class ApiController:
 
     @classmethod
     def technology_filter(cls, data: EmployeeFilterRequest) -> list:
+        if data.status and not data.date:
+            return cls.to_list(Employee.query.filter(and_(
+                Employee.main_technology == data.main_technology,
+                Employee.programmer_level == data.programmer_level,
+                Employee.status == data.status
+            )))
+        elif data.date and data.status:
+            return cls.to_list(Employee.query.filter(and_(
+                Employee.main_technology == data.main_technology,
+                Employee.programmer_level == data.programmer_level,
+                Employee.status == data.status,
+                Employee.project_end_date - date.today() <= data.date
+            )))
         return cls.to_list(Employee.query.filter(and_(
             Employee.main_technology == data.main_technology,
             Employee.programmer_level == data.programmer_level

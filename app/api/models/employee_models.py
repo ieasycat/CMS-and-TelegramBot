@@ -28,6 +28,8 @@ class GetEmployeesResponse:
 class EmployeeFilterRequest:
     main_technology: str
     programmer_level: str
+    status: Optional[str] = None
+    date: Optional[int] = None
 
 
 @dataclass_validate
