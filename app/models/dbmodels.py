@@ -65,7 +65,9 @@ class Employee(db.Model):
     last_name = db.Column(db.String(50), index=True)
     nickname = db.Column(db.String(50))
     main_technology = db.Column(db.String(50), index=True)
+    programmer_level = db.Column(db.String(10), index=True)
     status = db.Column(db.String(15))
+    project_end_date = db.Column(db.Date(), index=True)
     employee_data = db.relationship(
         'EmployeeData',
         backref='employee',

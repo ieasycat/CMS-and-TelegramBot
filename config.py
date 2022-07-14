@@ -16,6 +16,9 @@ class Config(object):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = os.environ.get('ADMINS')
+    TOKEN = os.environ.get('TOKEN')
+    HEADERS = {'Authorization': f'Bearer {os.environ.get("API_TOKEN")}'}
+    URL = os.environ.get('URL')
 
 
 CONFIG = Config()

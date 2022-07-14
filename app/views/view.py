@@ -35,11 +35,12 @@ def index(page=1):
     return render_template('main.html', context=context)
 
 
-@bp.route('/technology_filter/<string:main_technology>', methods=['GET', 'POST'])
-@bp.route('/technology_filter/<string:main_technology>/<int:page>', methods=['GET', 'POST'])
+@bp.route('/technology_filter/<string:main_technology>&<string:programmer_level>', methods=['GET', 'POST'])
+@bp.route('/technology_filter/<string:main_technology>/<int:page>&<string:programmer_level>', methods=['GET', 'POST'])
 @login_required
-def technology_filter(main_technology: str, page=1):
-    form_filter = TechnologyFilterForm(main_technology=urllib.parse.unquote(main_technology))
+def technology_filter(main_technology: str, programmer_level: str, page=1):
+    form_filter = TechnologyFilterForm(main_technology=urllib.parse.unquote(main_technology),
+                                       programmer_level=urllib.parse.unquote(programmer_level))
     form_search = EmployeeSearchForm()
 
     form = EmployeeController.form_validate_on_submit(form_filter=TechnologyFilterForm(), form_search=form_search)
@@ -47,15 +48,18 @@ def technology_filter(main_technology: str, page=1):
     if form:
         return form
 
-    employees = EmployeeController.technology_filter(urllib.parse.unquote(main_technology), page)
+    employees = EmployeeController.technology_filter(main_technology=urllib.parse.unquote(main_technology),
+                                                     programmer_level=urllib.parse.unquote(programmer_level), page=page)
     context = {
         'form_filter': form_filter,
         'form_search': form_search,
         'employees': employees,
-        'next_url': UrlController.get_next_url(endpoint='employee.technology_filter',
-                                               parameter={'main_technology': main_technology}, pagination=employees),
-        'prev_url': UrlController.get_prev_url(endpoint='employee.technology_filter',
-                                               parameter={'main_technology': main_technology}, pagination=employees)
+        'next_url': UrlController.get_next_url(
+            endpoint='employee.technology_filter',
+            parameter={'main_technology': main_technology, 'programmer_level': programmer_level}, pagination=employees),
+        'prev_url': UrlController.get_prev_url(
+            endpoint='employee.technology_filter',
+            parameter={'main_technology': main_technology, 'programmer_level': programmer_level}, pagination=employees)
     }
     return render_template('technology_filter.html', context=context)
 

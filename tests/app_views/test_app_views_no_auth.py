@@ -12,10 +12,10 @@ def test_main_and_add_page_no_authorization(client, url):
 
 
 @pytest.mark.parametrize('url, data', [
-    ('employee.technology_filter', 'Python')
+    ('employee.technology_filter', {'technology': 'Python', 'programmer_level': 'Middle'})
 ])
 def test_filter_page_no_authorization(url, data, client):
-    res = client.post(url_for(url, main_technology=data))
+    res = client.post(url_for(url, main_technology=data['technology'], programmer_level=data['programmer_level']))
     assert res.status_code == 302
 
 

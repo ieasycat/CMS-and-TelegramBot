@@ -53,7 +53,9 @@ def employee(app):
         name='Test',
         last_name='Tester',
         main_technology='Python',
+        programmer_level='Middle',
         status='Free',
+        project_end_date=None,
         cv='Testing'
     )
     EmployeeController.add_employee(test_form)

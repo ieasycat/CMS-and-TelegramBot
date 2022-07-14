@@ -1,5 +1,5 @@
 from flask_sqlalchemy import BaseQuery
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 from app.models.dbmodels import Employee, EmployeeData
 from app.api.models.employee_models import EmployeeResponse, EmployeeAddRequest, EmployeeSearchRequest, \
     EmployeeFilterRequest, EmployeeUpdateRequest
@@ -25,7 +25,9 @@ class ApiController:
                 name=data.name.capitalize(),
                 last_name=data.last_name.capitalize(),
                 main_technology=data.main_technology,
-                status=data.status.capitalize()
+                programmer_level=data.programmer_level,
+                status=data.status.capitalize(),
+                project_end_date=data.project_end_date
             )
 
             db.session.add(employee)
@@ -47,12 +49,15 @@ class ApiController:
     def update_employee(data: EmployeeUpdateRequest, employee_id: int):
         try:
             employee = Employee.query.get(employee_id)
-            employee.name = data.name.capitalize()
-            employee.last_name = data.last_name.capitalize()
-            employee.main_technology = data.main_technology
-            employee.status = data.status.capitalize()
-            employee.employee_data.cd = data.cv
-            employee.employee_data.additional_data = data.additional_data
+            employee.name = data.name.capitalize() if data.name else employee.employee_data
+            employee.last_name = data.last_name.capitalize() if data.last_name else employee.last_name
+            employee.main_technology = data.main_technology if data.main_technology else employee.main_technology
+            employee.programmer_level = data.programmer_level if data.programmer_level else employee.programmer_level
+            employee.status = data.status.capitalize() if data.status else employee.status
+            employee.project_end_date = data.project_end_date if data.project_end_date else employee.project_end_date
+            employee.employee_data.cd = data.cv if data.cv else employee.employee_data.cv
+            employee.employee_data.additional_data = \
+                data.additional_data if data.additional_data else employee.employee_data.additional_data
 
             db.session.flush()
             db.session.commit()
@@ -80,7 +85,10 @@ class ApiController:
 
     @classmethod
     def technology_filter(cls, data: EmployeeFilterRequest) -> list:
-        return cls.to_list(Employee.query.filter_by(main_technology=data.main_technology))
+        return cls.to_list(Employee.query.filter(and_(
+            Employee.main_technology == data.main_technology,
+            Employee.programmer_level == data.programmer_level
+        )))
 
     @classmethod
     def employee_search(cls, data: EmployeeSearchRequest) -> list:
@@ -101,6 +109,8 @@ class ApiController:
                                  last_name=el.last_name,
                                  nickname=el.nickname,
                                  main_technology=el.main_technology,
+                                 programmer_level=el.programmer_level,
                                  status=el.status,
+                                 project_end_date=el.project_end_date,
                                  cv=el.employee_data.cv,
                                  additional_data=el.employee_data.additional_data) for el in employees]

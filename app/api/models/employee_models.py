@@ -11,7 +11,9 @@ class EmployeeResponse:
     last_name: str
     nickname: str
     main_technology: str
+    programmer_level: str
     status: str
+    project_end_date: Optional[str] = None
     cv: Optional[str] = None
     additional_data: Optional[str] = None
 
@@ -25,6 +27,7 @@ class GetEmployeesResponse:
 @dataclass
 class EmployeeFilterRequest:
     main_technology: str
+    programmer_level: str
 
 
 @dataclass_validate
@@ -39,7 +42,9 @@ class EmployeeAddRequest:
     name: str
     last_name: str
     main_technology: str
+    programmer_level: str
     status: str
+    project_end_date: Optional[str] = None
     cv: Optional[str] = None
     additional_data: Optional[str] = None
 
@@ -50,7 +55,9 @@ class EmployeeUpdateRequest:
     name: Optional[str] = None
     last_name: Optional[str] = None
     main_technology: Optional[str] = None
+    programmer_level: Optional[str] = None
     status: Optional[str] = None
+    project_end_date: Optional[str] = None
     cv: Optional[str] = None
     additional_data: Optional[str] = None
 
