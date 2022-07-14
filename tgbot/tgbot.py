@@ -3,7 +3,7 @@ from config import CONFIG
 from telegrambot_controllers import TelegramBotController
 
 
-def telegram_bot(token):
+def telegram_bot(token: str):
     bot = TeleBot(token)
 
     technology = ('Python', 'DevOps', 'Android', 'UI/UX', 'Flutter')

@@ -1,11 +1,14 @@
 import requests
 from config import CONFIG
+from app.models.dbmodels import Employee
+from telebot import TeleBot
+from telebot.types import Message
 
 
 class TelegramBotController:
 
     @staticmethod
-    def send_employee(employee, bot, message):
+    def send_employee(employee: Employee, bot: TeleBot, message: Message):
         text = f"Level: {employee['programmer_level']}, Nickname: {employee['nickname']},\n" \
                f"CV: {employee['cv']}"
         return bot.send_message(message.chat.id, text=text)
