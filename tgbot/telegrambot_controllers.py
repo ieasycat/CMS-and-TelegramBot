@@ -9,7 +9,8 @@ class TelegramBotController:
 
     @staticmethod
     def send_employee(employee: Employee, bot: TeleBot, message: Message):
-        text = f"Level: {employee['programmer_level']}, Nickname: {employee['nickname']},\n" \
+        text = f"Nickname: {employee['nickname']},\n" \
+               f"Level: {employee['programmer_level']},\n" \
                f"CV: {employee['cv']}"
         return bot.send_message(message.chat.id, text=text)
 

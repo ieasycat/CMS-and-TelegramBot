@@ -50,7 +50,8 @@ def telegram_bot(token: str):
             TelegramBotController.send_employee(employee=employee, bot=bot, message=message)
 
         if employees_busy:
-            bot.send_message(message.chat.id, text='These specialists will be released within a month')
+            bot.send_message(message.chat.id,
+                             text='__*These specialists will be released within a month*__', parse_mode="MarkdownV2")
 
             for employee in employees_busy:
                 TelegramBotController.send_employee(employee=employee, bot=bot, message=message)
