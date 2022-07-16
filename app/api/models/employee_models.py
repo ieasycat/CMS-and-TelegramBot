@@ -26,8 +26,8 @@ class GetEmployeesResponse:
 @dataclass_validate
 @dataclass
 class EmployeeFilterRequest:
-    main_technology: str
-    programmer_level: str
+    main_technology: Optional[str] = None
+    programmer_level: Optional[str] = None
     status: Optional[str] = None
     date: Optional[int] = None
 

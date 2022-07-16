@@ -85,36 +85,45 @@ class ApiController:
             db.session.rollback()
 
     @classmethod
-    def technology_filter(cls, data: EmployeeFilterRequest) -> list:
+    def filter(cls, data: EmployeeFilterRequest) -> list:
+        if not data.main_technology and not data.programmer_level and not data.status and not data.date:
+            return cls.get_all_employees()
         if data.status and not data.date:
-            return cls.to_list(Employee.query.filter(and_(
-                Employee.main_technology == data.main_technology,
-                Employee.programmer_level == data.programmer_level,
-                Employee.status == data.status
-            )))
+            return cls.filter_tech_level_status(data=data)
         elif data.date and data.status:
+            return cls.filter_tech_level_status_date(data=data)
+        else:
             return cls.to_list(Employee.query.filter(and_(
                 Employee.main_technology == data.main_technology,
-                Employee.programmer_level == data.programmer_level,
-                Employee.status == data.status,
-                Employee.project_end_date - date.today() <= data.date
+                Employee.programmer_level == data.programmer_level
             )))
+
+    @classmethod
+    def filter_tech_level_status(cls, data):
         return cls.to_list(Employee.query.filter(and_(
             Employee.main_technology == data.main_technology,
-            Employee.programmer_level == data.programmer_level
+            Employee.programmer_level == data.programmer_level,
+            Employee.status == data.status
+        )))
+
+    @classmethod
+    def filter_tech_level_status_date(cls, data):
+        return cls.to_list(Employee.query.filter(and_(
+            Employee.main_technology == data.main_technology,
+            Employee.programmer_level == data.programmer_level,
+            Employee.status == data.status,
+            Employee.project_end_date - date.today() <= data.date
         )))
 
     @classmethod
     def employee_search(cls, data: EmployeeSearchRequest) -> list:
-        return cls.to_list(
-            Employee.query.filter(
-                or_(
-                    Employee.name.like(f'%{data.data}%'),
-                    Employee.nickname.like(f'%{data.data}%'),
-                    Employee.last_name.like(f'%{data.data}%')
-                )
+        return cls.to_list(Employee.query.filter(
+            or_(
+                Employee.name.like(f'%{data.data}%'),
+                Employee.nickname.like(f'%{data.data}%'),
+                Employee.last_name.like(f'%{data.data}%')
             )
-        )
+        ))
 
     @staticmethod
     def to_list(employees: BaseQuery) -> list:

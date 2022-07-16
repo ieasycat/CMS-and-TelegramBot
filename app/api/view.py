@@ -28,7 +28,7 @@ def technology_filter():
         data = EmployeeFilterRequest(**json)
     except TypeValidationError as e:
         raise APIError(message=e.errors)
-    return make_response(jsonify(GetEmployeesResponse(ApiController.technology_filter(data=data))), 200)
+    return make_response(jsonify(GetEmployeesResponse(ApiController.filter(data=data))), 200)
 
 
 @bp.route('employees/search', methods=['GET'])
