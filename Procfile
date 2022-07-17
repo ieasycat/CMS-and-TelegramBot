@@ -1,2 +1,2 @@
 web: gunicorn wsgi:app
-bot: python tgbot.py
+bot: python tgbot/tgbot.py
