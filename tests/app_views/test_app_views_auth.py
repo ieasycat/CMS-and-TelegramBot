@@ -12,7 +12,7 @@ def test_main_and_add_page_authorization(client, url, auth_login):
 
 
 def test_filter_page_authorization(client, auth_login):
-    res = client.post(url_for('employee.technology_filter', main_technology='Python'))
+    res = client.post(url_for('employee.technology_filter', main_technology='Python', programmer_level='Middle'))
     assert res.status_code == 200
 
 

@@ -5,7 +5,7 @@ load_dotenv()
 
 
 class Config(object):
-    SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL').replace("://", "ql://", 1)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = os.getenv('SECRET_KEY')
     POSTS_PER_PAGE = int(os.getenv('POSTS_PER_PAGE'))
@@ -16,6 +16,9 @@ class Config(object):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = os.environ.get('ADMINS')
+    TOKEN = os.environ.get('TOKEN')
+    HEADERS = {'Authorization': f'Bearer {os.environ.get("API_TOKEN")}'}
+    URL = os.environ.get('URL')
 
 
 CONFIG = Config()

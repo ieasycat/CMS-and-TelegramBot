@@ -4,6 +4,7 @@
         <form class="navbar-form navbar-left" method="post" action="">
             {{ context.form_filter.csrf_token }}
             {{ context.form_filter.main_technology.label }}: {{ context.form_filter.main_technology }}
+            {{ context.form_filter.programmer_level.label }}: {{ context.form_filter.programmer_level }}
             {{ context.form_filter.submit }}
         </form>
         <form class="navbar-form navbar-left" method="post" action=''>
@@ -19,7 +20,9 @@
                 <td>Last name</td>
                 <td>Nickname</td>
                 <td>Main technology</td>
+                <td>Programmer level</td>
                 <td>Status</td>
+                <td>Project end date</td>
                 <td>CV</td>
                 <td>User actions</td>
         </tr>
@@ -29,7 +32,13 @@
             <td>{{ employee.last_name }}</td>
             <td>{{ employee.nickname }}</td>
             <td>{{ employee.main_technology }}</td>
+            <td>{{ employee.programmer_level }}</td>
             <td>{{ employee.status }}</td>
+            {% if employee.project_end_date %}
+                <td>{{ employee.project_end_date }}</td>
+            {% else %}
+                <td></td>
+            {% endif %}
             <td>{{ employee.employee_data.cv }}</td>
             <td>
                 <form class="form-inline" action="{{ url_for('employee.update_status', employee_id = employee.id) }}" method="post">

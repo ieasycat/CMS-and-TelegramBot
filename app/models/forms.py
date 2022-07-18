@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SelectField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
+from wtforms import StringField, TextAreaField, SelectField, PasswordField, SubmitField, BooleanField, DateField
+from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Optional
 from app.models.dbmodels import Manager
 import re
 
@@ -13,7 +13,12 @@ class AddEmployeeForm(FlaskForm):
         choices=['Python', 'DevOps', 'Android', 'UI/UX', 'Flutter'],
         validators=[DataRequired()]
     )
+    programmer_level = SelectField(
+        'Programmer level',
+        choices=['Middle', 'Senior'],
+        validators=[DataRequired()])
     status = SelectField('Status', choices=['Free', 'Busy'], validators=[DataRequired()])
+    project_end_date = DateField('Project end date', validators=[Optional()])
     cv = TextAreaField('CV')
     additional_data = TextAreaField('Additional data')
     submit = SubmitField('Add')
@@ -29,6 +34,10 @@ class TechnologyFilterForm(FlaskForm):
         choices=['Python', 'DevOps', 'Android', 'UI/UX', 'Flutter'],
         validators=[DataRequired()]
     )
+    programmer_level = SelectField(
+        'Programmer level',
+        choices=['Middle', 'Senior'],
+        validators=[DataRequired()])
     submit = SubmitField('Filter')
 
 

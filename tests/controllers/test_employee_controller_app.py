@@ -10,7 +10,7 @@ def test_get_all_employees(employee):
 
 
 def test_technology_filter(employee):
-    employees = EmployeeController.technology_filter(main_technology='Python', page=1)
+    employees = EmployeeController.technology_filter(main_technology='Python', programmer_level='Middle', page=1)
     assert employees.total == 1
 
 
@@ -29,7 +29,9 @@ def test_add_employee(app):
         name='Test1',
         last_name='Tester1',
         main_technology='Python',
+        programmer_level='Middle',
         status='Free',
+        project_end_date=None,
         cv='Testing'
     )
     EmployeeController.add_employee(test_form)

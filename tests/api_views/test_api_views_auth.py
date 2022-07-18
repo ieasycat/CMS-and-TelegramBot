@@ -8,7 +8,8 @@ def test_get_all_employees(client, url, employee, user_headers):
     assert res.status_code == 200
     assert res.json == {"employees": [{"additional_data": None, "cv": "Testing", "id": 1, "last_name": "Tester",
                                        "main_technology": "Python", "name": "Test",
-                                       "nickname": "Python_1", "status": "Free"}]}
+                                       "nickname": "Python_1", 'programmer_level': 'Middle', 'project_end_date': None,
+                                       "status": "Free"}]}
 
 
 @pytest.mark.parametrize('url, id', [
@@ -18,6 +19,7 @@ def test_get_employee(client, url, id, user_headers, employee):
     res = client.get(url_for(url, employee_id=id), headers=user_headers)
     assert res.status_code == 200
     assert res.json == {'id': 1, 'last_name': 'Tester', 'main_technology': 'Python',
+                        'programmer_level': 'Middle', 'project_end_date': None,
                         'name': 'Test', 'nickname': 'Python_1', 'status': 'Free'}
 
 
@@ -27,6 +29,7 @@ def test_add_employee(client, url, user_headers):
         'name': 'Test1',
         'last_name': 'Apitest',
         'main_technology': 'Python',
+        'programmer_level': 'Middle',
         'status': 'Free'
     })
     assert res.status_code == 201
@@ -34,7 +37,7 @@ def test_add_employee(client, url, user_headers):
 
 
 @pytest.mark.parametrize('url, json', [
-    ('api.technology_filter', {'main_technology': 'Python'}),
+    ('api.technology_filter', {'main_technology': 'Python', 'programmer_level': 'Middle'}),
     ('api.employee_search', {'data': 'Test'})
 ])
 def test_filter_and_search_employees(url, json, client, user_headers, employee):
@@ -43,8 +46,8 @@ def test_filter_and_search_employees(url, json, client, user_headers, employee):
     assert res.json == {'employees': [
             {
                 'additional_data': None, 'cv': 'Testing', 'id': 1, 'last_name': 'Tester',
-                'main_technology': 'Python', 'name': 'Test',
-                'nickname': 'Python_1', 'status': 'Free'
+                'main_technology': 'Python', 'name': 'Test', 'programmer_level': 'Middle',
+                'project_end_date': None, 'nickname': 'Python_1', 'status': 'Free'
             }
     ]}
 
