@@ -2,7 +2,6 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SelectField, PasswordField, SubmitField, BooleanField, DateField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Optional
 from app.models.dbmodels import Manager
-import re
 
 
 class AddEmployeeForm(FlaskForm):
@@ -53,9 +52,6 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Registration')
 
     def validate_email(self, email: StringField):
-        if not re.search(pattern=r'@playsdev.com$', string=email.data):
-            raise ValidationError('Please use email with domain "playsdev.com".')
-
         user = Manager.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('Please use a different email address.')

@@ -7,9 +7,6 @@ from app.models.dbmodels import Manager, Employee
 from app.models.forms import RegistrationForm, AddEmployeeForm
 
 
-# pytest_plugins = []
-
-
 @pytest.fixture
 def app():
     app = create_app()
@@ -33,9 +30,9 @@ def client(app):
 
 @pytest.fixture
 def user(app):
-    test_form = RegistrationForm(email='test@playsdev.com', password='9215765')
+    test_form = RegistrationForm(email='test@test.com', password='1234567890Q')
     ManagerController.add_manager(test_form)
-    user = db.session.query(Manager).filter_by(email='test@playsdev.com').first()
+    user = db.session.query(Manager).filter_by(email='test@test.com').first()
     return user
 
 
@@ -43,7 +40,7 @@ def user(app):
 def auth_login(user, client):
     return client.post(url_for('auth.login'), data={
         'email': user.email,
-        'password': '9215765'
+        'password': '1234567890Q'
     })
 
 

@@ -25,7 +25,7 @@ class EmailController:
         token = user.get_reset_password_token()
 
         EmailController.send_email(
-            subject='Hr-Bot: Reset Your Password',
+            subject='Reset Your Password',
             sender=current_app.config['ADMINS'][0],
             recipients=[user.email],
             text_body=render_template('email/reset_password.txt',
