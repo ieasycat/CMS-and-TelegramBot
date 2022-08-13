@@ -132,3 +132,7 @@ dmypy.json
 !.env
 *.env
 .DS_Store
+*.env_docker
+!.env_docker
+.env_docker
+.env_docker
